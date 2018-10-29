@@ -1,0 +1,32 @@
+<html>
+    <body>
+        <a href="https://accounts.google.com/o/oauth2/v2/auth?scope=profile https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&redirect_uri=https%3A%2F%2Flocalhost%3A8000%2Fpre-google-low.html&response_type=token&client_id=1087086433511-9vappie1l2qd7uj1u7jjuofgth3delk7.apps.googleusercontent.com">Login with Google</a>
+        <div id="welcome"></div>
+        <div id="calendar"></div>
+        <script>
+            var r_access_token = location.href.match(/access_token=([^&]+)/);
+            if(r_access_token){
+                var access_token = r_access_token[1];
+                if(access_token){
+                    fetch('https://www.googleapis.com/plus/v1/people/me?access_token='+access_token)
+                        .then(function(response){
+                            return response.json();
+                        })
+                        .then(function(json){
+                            document.querySelector('#welcome').innerHTML = 'Welcome, '+json.displayName;
+                        });
+                    fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=100&access_token='+access_token)
+                        .then(function(response){
+                            return response.json();
+                        })
+                        .then(function(json){
+                            console.log(json);
+                            document.querySelector('#calendar').innerHTML = json.items.map(function(e){
+                                return e.summary;
+                            })
+                        });
+                }
+            }
+        </script>
+    </body>
+</html>

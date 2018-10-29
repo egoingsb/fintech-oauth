@@ -1,0 +1,69 @@
+<html>
+
+<body>
+    <div id="welcome"></div>
+    <div id="calendar"></div>
+    <input type="button" id="signBTN" value="checking....." onclick="
+        var gauth = gapi.auth2.getAuthInstance();
+        if(this.value === 'Logout'){
+            gauth.signOut(function(){
+                refreshLoginStatus();
+            });
+        } else if(this.value === 'Login'){
+            gauth.signIn(function(){
+                refreshLoginStatus();
+            });
+        }
+    ">
+    <script>
+        function refreshLoginStatus() {
+            var gauth = gapi.auth2.getAuthInstance();
+            var isSigned = gauth.isSignedIn.get();
+            console.log('refreshLoginStatus', isSigned);
+            if (isSigned) {
+                document.querySelector('#signBTN').value = 'Logout';
+                var name = gauth.currentUser.get().getBasicProfile().getName();
+                document.querySelector('#welcome').innerHTML = 'Welcome,' + name;
+                var gclient = gapi.client.init({
+                    client_id: '1087086433511-9vappie1l2qd7uj1u7jjuofgth3delk7.apps.googleusercontent.com'
+                });
+                gclient.then(function () {
+                    console.log('init gclient');
+                    gapi.client.load('https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest')
+                        .then(function () {
+                            gapi.client.calendar.calendarList.list().then(function (response) {
+                                console.log(response.result.items);
+                                document.querySelector('#calendar').innerHTML = response.result.items
+                                    .map(function (e) {
+                                        return e.summary;
+                                    })
+                            });
+                        })
+                })
+            } else {
+                document.querySelector('#signBTN').value = 'Login';
+                document.querySelector('#welcome').innerHTML = '';
+            }
+        }
+
+        function init() {
+            gapi.load('auth2:client', function () {
+                var gauth = gapi.auth2.init({
+                    client_id: '1087086433511-9vappie1l2qd7uj1u7jjuofgth3delk7.apps.googleusercontent.com'
+                });
+                gauth.then(function () {
+                    console.log('gauth init');
+                    refreshLoginStatus();
+                });
+                gauth.isSignedIn.listen(function () {
+                    refreshLoginStatus();
+                });
+
+            });
+
+        }
+    </script>
+    <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+</body>
+
+</html>
