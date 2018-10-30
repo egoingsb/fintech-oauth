@@ -1,0 +1,51 @@
+<html>
+
+<body>
+    <input type="button" id="authBtn" value="checking..." onclick="
+        var gauth = gapi.auth2.getAuthInstance();
+        if(this.value === 'Login'){
+            gauth.signIn().then(function(){
+                refreshAuthStatus();
+            });
+        } else if(this.value === 'Logout'){
+            gauth.signOut().then(function(){
+                refreshAuthStatus();
+            });
+        }
+    ">
+    <script>
+        function refreshAuthStatus() {
+            var gauth = gapi.auth2.getAuthInstance();
+            var isSigned = gauth.isSignedIn.get();
+            if (isSigned) {
+                document.querySelector('#authBtn').value = 'Logout';
+                gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
+                    .then(function () {
+                        gapi.client.calendar.calendarList.list().then(function (e) {
+                            console.log(e);
+                        });
+                    });
+            } else {
+                document.querySelector('#authBtn').value = 'Login'
+            }
+
+        }
+
+        function init() {
+            console.log('init');
+            gapi.load('auth2:client', function () {
+                console.log('init auth2');
+                var gauth = gapi.auth2.init({
+                    client_id: '1087086433511-9vappie1l2qd7uj1u7jjuofgth3delk7.apps.googleusercontent.com'
+                });
+                gauth.then(function () {
+                    console.log('init gauth');
+                    refreshAuthStatus();
+                });
+            });
+        }
+    </script>
+    <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+</body>
+
+</html>
