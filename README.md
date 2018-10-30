@@ -1,7 +1,7 @@
 # 아래 주소를 입력해서 이곳으로 와주세요
 http://bit.ly/fin-oauth
 
-#wifi
+# wifi
 fintechC_5G / fintech03
 
 # 설치해주세요
