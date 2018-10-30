@@ -1,5 +1,24 @@
 <html>
+
 <body>
-    <a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=322526551075-3j8athnl8n7hu021v8khfnshln6flp5e.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A8000%2Fgoogle-low.html&response_type=token&scope=profile+email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly">Login With Google</a>
+    <a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=322526551075-3j8athnl8n7hu021v8khfnshln6flp5e.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A8000%2Fgoogle-low.html&response_type=token&scope=profile+email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly">Login
+        With Google</a>
+    <script>
+        var r_access_token = location.href.match(/access_token=([^&]+)/);
+        if (r_access_token) {
+            var access_token = r_access_token[1];
+            console.log('access token', access_token);
+            fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList?access_token=' + access_token)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (json) {
+                    console.log(json);
+                });
+        } else {
+
+        }
+    </script>
 </body>
+
 </html>
