@@ -1,0 +1,49 @@
+<html>
+
+<head>
+    <meta name="google-signin-client_id" content="1087086433511-9vappie1l2qd7uj1u7jjuofgth3delk7.apps.googleusercontent.com">
+</head>
+
+<body>
+    <div id="my-signin2"></div>
+    <div id="calendar"></div>
+    <script>
+        function onSuccess(googleUser) {
+            console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+            var auth = googleUser.getAuthResponse();
+            var access_token = auth.access_token;
+            if (access_token) {
+                fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList?access_token=' + access_token)
+                    .then(function (res) {
+                        return res.json();
+                    })
+                    .then(function (json) {
+                        console.log(json);
+                        document.querySelector('#calendar').innerHTML = json.items.map(function(e){
+                            return '<li>'+e.summary+'</li>';
+                        }).join('');
+                    })
+            }
+        }
+
+        function onFailure(error) {
+            console.log(error);
+        }
+
+        function renderButton() {
+            gapi.signin2.render('my-signin2', {
+                'scope': 'profile email',
+                'width': 240,
+                'height': 50,
+                'longtitle': true,
+                'theme': 'dark',
+                'onsuccess': onSuccess,
+                'onfailure': onFailure
+            });
+        }
+    </script>
+
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+</body>
+
+</html>
